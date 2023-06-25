@@ -1,0 +1,4 @@
+*.log
+*.ini
+*.swp
+__pycache__/
