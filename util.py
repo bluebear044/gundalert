@@ -65,3 +65,11 @@ if __name__ == "__main__":
     sorted_dicts1 = sortDictsArray(dicts1, 'name')
     sorted_dicts2 = sortDictsArray(dicts2, 'name')
     diff = compareDictsArray(sorted_dicts1, sorted_dicts2)
+
+def convertStringToNumber(param):
+    try:
+        number = int(param.replace(',', ''))
+        return number
+    except ValueError:
+        print(f"Error: Unable to convert '{param}' to a number.")
+        return None
