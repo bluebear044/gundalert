@@ -60,7 +60,7 @@ class DB:
             return cursor.fetchall()
 
         except (Exception, psycopg2.Error) as error:
-            logging.error("Failed to insert record into mobile table %s",error)
+            logging.error("Failed to select record into mobile table %s",error)
 
         finally:
             if connection is not None:
@@ -80,7 +80,28 @@ class DB:
             return cursor.fetchall()
 
         except (Exception, psycopg2.Error) as error:
-            logging.error("Failed to insert record into mobile table %s",error)
+            logging.error("Failed to selectByAlertFlag record into mobile table %s",error)
+
+        finally:
+            if connection is not None:
+                cursor.close()
+                releaseConnection(connection)
+                logging.debug("PostgreSQL connection is closed")
+
+
+    def updateAlertFlag(self):
+        try:
+            connection = getConnection()
+            cursor = connection.cursor()
+
+            query = "UPDATE gund_item SET alert_flag = 'true', alert_dttm = CURRENT_TIMESTAMP WHERE alert_flag = 'false'"
+            cursor.execute(query)
+
+            connection.commit()
+            return cursor.rowcount
+
+        except (Exception, psycopg2.Error) as error:
+            logging.error("Failed to updateAlertFlag record into mobile table %s",error)
 
         finally:
             if connection is not None:

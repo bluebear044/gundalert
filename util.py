@@ -58,14 +58,6 @@ def sortDictsArray(arr, key):
     return sortedArr
 
 
-if __name__ == "__main__":
-    dicts1 = [{'name': 'Alice', 'age': 1}, {'name': 'Bob', 'age': 1}, {'name': 'Doba', 'age': 1}, {'name': 'Eyota', 'age': 1}]
-    dicts2 = [{'name': 'Alice', 'age': 1}, {'name': 'Bob', 'age': 1}, {'name': 'Charlie', 'age': 1}, {'name': 'Eyota', 'age': 1}]
-
-    sorted_dicts1 = sortDictsArray(dicts1, 'name')
-    sorted_dicts2 = sortDictsArray(dicts2, 'name')
-    diff = compareDictsArray(sorted_dicts1, sorted_dicts2)
-
 def convertStringToNumber(param):
     try:
         number = int(param.replace(',', ''))
@@ -73,3 +65,12 @@ def convertStringToNumber(param):
     except ValueError:
         print(f"Error: Unable to convert '{param}' to a number.")
         return None
+
+
+if __name__ == "__main__":
+    dicts1 = [{'name': 'Alice', 'age': 1}, {'name': 'Bob', 'age': 1}, {'name': 'Doba', 'age': 1}, {'name': 'Eyota', 'age': 1}]
+    dicts2 = [{'name': 'Alice', 'age': 1}, {'name': 'Bob', 'age': 1}, {'name': 'Charlie', 'age': 1}, {'name': 'Eyota', 'age': 1}]
+
+    sorted_dicts1 = sortDictsArray(dicts1, 'name')
+    sorted_dicts2 = sortDictsArray(dicts2, 'name')
+    diff = compareDictsArray(sorted_dicts1, sorted_dicts2)

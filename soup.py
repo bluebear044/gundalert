@@ -3,6 +3,7 @@ import urllib3
 import time
 import logging
 import traceback
+import sys
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from db import DB
@@ -152,7 +153,20 @@ class Soup:
 
 
 if __name__ =="__main__":
-    soup = Soup()
-    soup.premiumBandaiSoup()
-    soup.bnkrMallSearchSoup()
-    soup.gundamBoomSoupPaging()
+    
+    if len(sys.argv) < 1:
+        print("Usage : python soup.py [bandai|bandaiSearch|gundamBoom]")
+        sys.exit(1)
+
+    arg1 = sys.argv[1]
+    if arg1 == "bandai":
+        Soup().premiumBandaiSoup()
+    
+    elif arg1 == "bandaiSearch":
+        Soup().bnkrMallSearchSoup()
+    
+    elif arg1 == "gundamBoom":
+        Soup().gundamBoomSoupPaging()
+        
+    else:
+        print("Please insert [bandai|bandaiSearch|gundamBoom] ")
