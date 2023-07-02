@@ -1,9 +1,7 @@
 import smtplib
-import logging
+from log_util import logger
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
-logging.basicConfig(filename="gundalert.log", encoding="utf-8", level=logging.INFO)
 
 def sendEmail(sender_email, sender_password, receiver_email, subject, message):
     msg = MIMEMultipart()
@@ -48,7 +46,7 @@ def compareDictsArray(dicts1, dicts2):
         dict2 = dicts2[j]
         diffDicts.append(dict2)
 
-    logging.info(diffDicts)
+    logger.info(diffDicts)
 
     return diffDicts
 

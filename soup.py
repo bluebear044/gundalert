@@ -1,20 +1,19 @@
 import requests
 import urllib3
 import time
-import logging
 import traceback
 import sys
+from log_util import logger
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from db import DB
 
 class Soup:
 
-    logging.basicConfig(filename="gundalert.log", encoding="utf-8", level=logging.INFO)
     urllib3.disable_warnings()
 
     def appendData(self, url, title, price):
-        logging.debug("\n== Item Info ==\nURL : %s\nTITLE : %s\nPRICE : %s\n",url, title , price)
+        logger.debug("\n== Item Info ==\nURL : %s\nTITLE : %s\nPRICE : %s\n",url, title , price)
         db = DB()
         db.insert(url,title,price)
 
@@ -22,15 +21,15 @@ class Soup:
         retry_count = 0
         while retry_count < max_retries:
             try:
-                logging.info("request url : %s", url)
+                logger.info("request url : %s", url)
                 response = requests.get(url, verify=False)
                 # 성공적인 응답을 받았을 경우 바로 반환합니다.
                 if response.status_code == 200:
                     html = response.text.encode("utf-8")
-                    logging.debug("response encoding : %s", response.encoding)
+                    logger.debug("response encoding : %s", response.encoding)
                     return html
             except requests.exceptions.RequestException as e:
-                logging.error("An exception occurred: %s", str(e))
+                logger.error("An exception occurred: %s", str(e))
             # 재시도 간격만큼 대기합니다.
             time.sleep(retry_interval)
             retry_count += 1
@@ -40,13 +39,13 @@ class Soup:
 
     # def reqUrl(self, url):
     #     try:
-    #         logging.info("request url : %s", url)
+    #         logger.info("request url : %s", url)
     #         response = requests.get(url, verify=False)
     #         html = response.text.encode("utf-8")
-    #         logging.debug("response encoding : %s", response.encoding)
+    #         logger.debug("response encoding : %s", response.encoding)
     #         return html
     #     except Exception as e:
-    #         logging.error(e)
+    #         logger.error(e)
 
 
     def checkStringContains(self, paramString):
@@ -70,25 +69,25 @@ class Soup:
                     url = item.get("href").replace("../","https://www.bnkrmall.co.kr/")
                     self.bnkrMallSoup(url)
         except Exception as e:
-            logging.error(traceback.print_exc())
+            logger.error(traceback.print_exc())
 
 
     def bnkrMallSoup(self, url):
 
-        logging.debug("Request URL : %s", url)
+        logger.debug("Request URL : %s", url)
         try:
             html = self.reqUrl(url)
             soup = BeautifulSoup(html, "html.parser")
             orderButton = soup.find_all("button", class_=["show_open buy_reserv btn btn-box full color-red hovNone","show_default buy btn btn-box full color-red hovNone"])
             if 0 < len(orderButton):
-                logging.debug("구매가능")
+                logger.debug("구매가능")
                 title = soup.find("div", "title").getText()
                 price = soup.find("div", "price").find("span").getText()
                 self.appendData(url, title, price)
             else:
-                logging.debug("구매불가")
+                logger.debug("구매불가")
         except Exception as e:
-            logging.error(traceback.print_exc())
+            logger.error(traceback.print_exc())
 
 
     def bnkrMallSearchSoup(self):
@@ -104,7 +103,7 @@ class Soup:
                     price = item.find("span", "num font-20 font-bold").getText().replace("\t", "").replace("\n", "")
                     self.appendData(url, title, price)
         except Exception as e:
-            logging.error(traceback.print_exc())
+            logger.error(traceback.print_exc())
 
 
     def gundamBoomSoupPaging(self):
@@ -113,7 +112,7 @@ class Soup:
 
             for i in range(12):
                 yearMonth = now.strftime("%Y%m")
-                logging.debug("yearMonth : %s", yearMonth)
+                logger.debug("yearMonth : %s", yearMonth)
                 url = "https://www.gundamboom.com/product/reserve.php?cate_no=" + yearMonth
                 html = self.reqUrl(url)
                 soup = BeautifulSoup(html, "html.parser")
@@ -124,12 +123,12 @@ class Soup:
 
                 now += timedelta(days=30)
         except Exception as e:
-            logging.error(traceback.print_exc())
+            logger.error(traceback.print_exc())
 
 
     def gundamBoomSoup(self, url, pageNumber):
 
-        logging.debug("Request URL : %s Page : %s", url, pageNumber)
+        logger.debug("Request URL : %s Page : %s", url, pageNumber)
         
         try:
             html = self.reqUrl(url+"&page="+str(pageNumber))
@@ -142,19 +141,19 @@ class Soup:
                     if item.find("dd","name") is not None:
                         itemTitle = item.find("dd","name").find("a").getText().encode("ISO-8859-1", "ignore").decode("euc-kr", "ignore")
                         if self.checkStringContains(itemTitle):
-                            logging.debug("구매가능")
+                            logger.debug("구매가능")
                             itemUrl = "https://www.gundamboom.com" + item.find("dd","name").find("a")["href"]
                             price = item.find("p", "right").find("span").getText()
                             self.appendData(itemUrl, itemTitle, price)
                 else:
-                    logging.debug("구매불가")
+                    logger.debug("구매불가")
         except Exception as e:
-            logging.error(traceback.print_exc())
+            logger.error(traceback.print_exc())
 
 
 if __name__ =="__main__":
-    
-    if len(sys.argv) < 1:
+
+    if len(sys.argv) < 2:
         print("Usage : python soup.py [bandai|bandaiSearch|gundamBoom]")
         sys.exit(1)
 

@@ -1,13 +1,9 @@
-import logging
+from log_util import logger
 import traceback
-import configparser
+from config_util import config
 from db import DB
 from util import sendEmail
 from datetime import datetime
-
-config = configparser.ConfigParser()
-config.read("config.ini")
-logging.basicConfig(filename="gundalert.log", encoding="utf-8", level=logging.INFO)
 
 class Alert:
 
@@ -28,13 +24,13 @@ class Alert:
 
                 sendEmail(config.get("Email", "sender"), config.get("Email", "password"), config.get("Email", "receiver"), "gundalert : " + datetime.now().strftime("%Y%m%d%H%M%S"), message)
                 db.updateAlertFlag()
-                logging.info("SEND EMAIL : It has been Sent.")
+                logger.info("SEND EMAIL : It has been Sent.")
             else:
-                logging.info("SEND EMAIL : Nothing happened.")
+                logger.info("SEND EMAIL : Nothing happened.")
                 
 
         except Exception as e:
-            logging.error(traceback.print_exc())
+            logger.error(traceback.print_exc())
 
 if __name__ =="__main__":
     alert = Alert()

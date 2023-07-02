@@ -1,13 +1,9 @@
 import psycopg2
 from psycopg2 import pool
-import logging
-import configparser
+from log_util import logger
+from config_util import config
 from datetime import datetime
 from util import convertStringToNumber
-
-config = configparser.ConfigParser()
-config.read("config.ini")
-logging.basicConfig(filename="gundalert.log", encoding="utf-8", level=logging.INFO)
 
 connection_pool = psycopg2.pool.SimpleConnectionPool(minconn=1,
                                                 maxconn=5,
@@ -19,7 +15,6 @@ connection_pool = psycopg2.pool.SimpleConnectionPool(minconn=1,
 
 def getConnection():
     return connection_pool.getconn()
-
 
 def releaseConnection(conn):
     connection_pool.putconn(conn)
@@ -40,13 +35,13 @@ class DB:
             return cursor.rowcount
 
         except (Exception, psycopg2.Error) as error:
-            logging.error("Failed to insert record into mobile table %s",error)
+            logger.error("Failed to insert record into mobile table %s",error)
 
         finally:
             if connection is not None:
                 cursor.close()
                 releaseConnection(connection)
-                logging.debug("PostgreSQL connection is closed")
+                logger.debug("PostgreSQL connection is closed")
 
 
     def select(self):
@@ -60,13 +55,13 @@ class DB:
             return cursor.fetchall()
 
         except (Exception, psycopg2.Error) as error:
-            logging.error("Failed to select record into mobile table %s",error)
+            logger.error("Failed to select record into mobile table %s",error)
 
         finally:
             if connection is not None:
                 cursor.close()
                 releaseConnection(connection)
-                logging.debug("PostgreSQL connection is closed")
+                logger.debug("PostgreSQL connection is closed")
 
 
     def selectByAlertFlag(self):
@@ -80,13 +75,13 @@ class DB:
             return cursor.fetchall()
 
         except (Exception, psycopg2.Error) as error:
-            logging.error("Failed to selectByAlertFlag record into mobile table %s",error)
+            logger.error("Failed to selectByAlertFlag record into mobile table %s",error)
 
         finally:
             if connection is not None:
                 cursor.close()
                 releaseConnection(connection)
-                logging.debug("PostgreSQL connection is closed")
+                logger.debug("PostgreSQL connection is closed")
 
 
     def updateAlertFlag(self):
@@ -101,13 +96,13 @@ class DB:
             return cursor.rowcount
 
         except (Exception, psycopg2.Error) as error:
-            logging.error("Failed to updateAlertFlag record into mobile table %s",error)
+            logger.error("Failed to updateAlertFlag record into mobile table %s",error)
 
         finally:
             if connection is not None:
                 cursor.close()
                 releaseConnection(connection)
-                logging.debug("PostgreSQL connection is closed")
+                logger.debug("PostgreSQL connection is closed")
 
 
 if __name__ =="__main__":
