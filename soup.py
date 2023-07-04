@@ -15,7 +15,9 @@ class Soup:
     def appendData(self, url, title, price):
         logger.debug("\n== Item Info ==\nURL : %s\nTITLE : %s\nPRICE : %s\n",url, title , price)
         db = DB()
-        db.insert(url,title,price)
+
+        if not db.dupCheck(url):
+            db.insert(url,title,price)
 
     def reqUrl(self, url, max_retries=10, retry_interval=1):
         retry_count = 0
@@ -48,14 +50,18 @@ class Soup:
     #         logger.error(e)
 
 
-    def checkStringContains(self, paramString):
+    def checkStringContains(self, text):
 
-        subStrings = ["PG", "MG", "HG", "RG", "RE/100", "로보트혼", "로봇혼"]
+        include_list = ["PG", "MG", "HG", "RG", "RE/100", "로보트혼", "로봇혼"]
+        exclude_list = ["경계전기", "데칼", "HGBC", "HGCE", "태양의 기사 피코", "트랜스포머", "SYNDUALITY", "마신영웅전 와타루", "신듀얼리티"]
         
-        for subString in subStrings:
-            if subString in paramString:
-                return True
-        return False
+        if not any(include_str in text for include_str in include_list):
+            return False
+
+        if any(exclude_str in text for exclude_str in exclude_list):
+            return False
+
+        return True
 
 
     def premiumBandaiSoup(self):

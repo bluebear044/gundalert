@@ -63,6 +63,28 @@ class DB:
                 releaseConnection(connection)
                 logger.debug("PostgreSQL connection is closed")
 
+    def dupCheck(self, url):
+        try:
+            connection = getConnection()
+            cursor = connection.cursor()
+
+            query = "SELECT * FROM gund_item WHERE url = %s"
+            cursor.execute(query, (url,))
+
+            rows = cursor.fetchall()
+            if (len(rows)) > 0:
+                return True
+            else:
+                return False
+
+        except (Exception, psycopg2.Error) as error:
+            logger.error("Failed to dupCheck record into mobile table %s",error)
+
+        finally:
+            if connection is not None:
+                cursor.close()
+                releaseConnection(connection)
+                logger.debug("PostgreSQL connection is closed")
 
     def selectByAlertFlag(self):
         try:
