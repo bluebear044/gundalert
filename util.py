@@ -4,12 +4,12 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 def sendEmail(sender_email, sender_password, receiver_email, subject, message):
-    msg = MIMEMultipart()
+    msg = MIMEMultipart('alternative')
     msg["From"] = sender_email
     msg["To"] = receiver_email
     msg["Subject"] = subject
 
-    msg.attach(MIMEText(message, "plain"))
+    msg.attach(MIMEText(message, "html"))
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()

@@ -35,14 +35,13 @@ class DB:
             return cursor.rowcount
 
         except (Exception, psycopg2.Error) as error:
-            logger.error("Failed to insert record into mobile table %s",error)
+            logger.error("Failed to insert %s",error)
 
         finally:
             if connection is not None:
                 cursor.close()
                 releaseConnection(connection)
                 logger.debug("PostgreSQL connection is closed")
-
 
     def select(self):
         try:
@@ -55,7 +54,7 @@ class DB:
             return cursor.fetchall()
 
         except (Exception, psycopg2.Error) as error:
-            logger.error("Failed to select record into mobile table %s",error)
+            logger.error("Failed to select %s",error)
 
         finally:
             if connection is not None:
@@ -78,7 +77,7 @@ class DB:
                 return False
 
         except (Exception, psycopg2.Error) as error:
-            logger.error("Failed to dupCheck record into mobile table %s",error)
+            logger.error("Failed to dupCheck %s",error)
 
         finally:
             if connection is not None:
@@ -97,7 +96,7 @@ class DB:
             return cursor.fetchall()
 
         except (Exception, psycopg2.Error) as error:
-            logger.error("Failed to selectByAlertFlag record into mobile table %s",error)
+            logger.error("Failed to selectByAlertFlag %s",error)
 
         finally:
             if connection is not None:
@@ -118,7 +117,27 @@ class DB:
             return cursor.rowcount
 
         except (Exception, psycopg2.Error) as error:
-            logger.error("Failed to updateAlertFlag record into mobile table %s",error)
+            logger.error("Failed to updateAlertFlag %s",error)
+
+        finally:
+            if connection is not None:
+                cursor.close()
+                releaseConnection(connection)
+                logger.debug("PostgreSQL connection is closed")
+
+    def deleteById(self, id):
+        try:
+            connection = getConnection()
+            cursor = connection.cursor()
+
+            query = "DELETE FROM gund_item WHERE id = %s"
+            cursor.execute(query, (id,))
+
+            connection.commit()
+            return cursor.rowcount
+
+        except (Exception, psycopg2.Error) as error:
+            logger.error("Failed to deleteById %s",error)
 
         finally:
             if connection is not None:
