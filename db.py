@@ -2,7 +2,6 @@ import psycopg2
 from psycopg2 import pool
 from log_util import logger
 from config_util import config
-from datetime import datetime
 from util import convertStringToNumber
 
 connection_pool = psycopg2.pool.SimpleConnectionPool(minconn=1,
@@ -48,10 +47,15 @@ class DB:
             connection = getConnection()
             cursor = connection.cursor()
 
-            query = "SELECT * FROM gund_item"
+            query = "SELECT * FROM gund_item order by id desc"
             cursor.execute(query)
+            results = cursor.fetchall()
 
-            return cursor.fetchall()
+            result_dict = []
+            for row in results:
+                result_dict.append({'id': row[0], 'url': row[1], 'title': row[2], 'price': row[3]})
+
+            return result_dict
 
         except (Exception, psycopg2.Error) as error:
             logger.error("Failed to select %s",error)
@@ -148,5 +152,6 @@ class DB:
 
 if __name__ =="__main__":
     db = DB()
-    db.insert("test.com", "test", 1000)
-    db.select()
+    # db.insert("test.com", "test", 1000)
+    results = db.select()
+    print(results)
