@@ -1,7 +1,7 @@
 from log_util import logger
 import traceback
 from config_util import config
-from db import DB
+from mongo import DB
 from util import sendEmail
 from datetime import datetime
 

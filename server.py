@@ -2,7 +2,7 @@ from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from db import DB
+from mongo import DB
 
 app = FastAPI()
 
@@ -19,7 +19,7 @@ def read_root():
     return {"Hello": "World"}
 
 @app.get("/delete/{id}")
-def read_item(id: int):
+def read_item(id: str):
     return DB().deleteById(id)
 
 @app.get("/list")

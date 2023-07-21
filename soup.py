@@ -7,7 +7,7 @@ import re
 from log_util import logger
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
-from db import DB
+from mongo import DB
 
 class Soup:
 
