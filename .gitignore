@@ -1,4 +1,5 @@
 *.log
 *.ini
 *.swp
+*.out
 __pycache__/
